@@ -1,0 +1,71 @@
+# Here are potential answers to the example questions in the final SQL project. 
+
+1.Show Customers (their full names, customer ID, and country) who are in the US
+SELECT FirstName, LastName, CustomerId, Country 
+FROM chinook.customers 
+WHERE Country = "USA";
+
+2.Show only the Customers from CANADA.
+SELECT *
+FROM chinook.customers
+WHERE country = 'Canada'
+
+3.Total number of invoices and the total revenue (sum of invoice amounts) for each customer.
+SELECT CustomerID, COUNT(InvoiceID) AS TotalInvoices, SUM(Total) AS TotalRevenue
+FROM chinook.invoices
+GROUP BY CustomerID;
+
+4.Artists who have released more than five albums.
+SELECT Name
+FROM chinook.artists
+WHERE ArtistID IN (
+    SELECT ArtistID
+    FROM chinook.albums
+    GROUP BY ArtistID
+    HAVING COUNT(AlbumID) >= 5
+);
+
+5.List the names of all playlists along with the number of tracks in each playlist.
+SELECT playlists.Name AS PlaylistName, COUNT(playlist_track.TrackID) AS NumTracks
+FROM chinook.playlists
+LEFT JOIN playlist_track ON playlists.PlaylistID = playlist_track.PlaylistID
+GROUP BY playlists.PlaylistID;
+
+6.Names of all customers who have made a purchase, along with the total amount spent by each customer.
+SELECT customers.CustomerID, customers.FirstName, customers.LastName, SUM(invoices.Total) AS TotalAmountSpent
+FROM chinook.customers
+JOIN chinook.invoices ON customers.CustomerID = invoices.CustomerID
+GROUP BY customers.CustomerID;
+
+ 7.Average unit price of all invoice items
+ SELECT AVG(UnitPrice) AS AverageUnitPrice
+FROM chinook.invoice_items;
+
+ 8. 5 genres with the highest number of tracks, along with the count of tracks in each genre.
+SELECT genres.Name AS GenreName, COUNT(tracks.TrackID) AS NumTracks
+FROM chinook.genres
+JOIN chinook.tracks ON chinook.genres.GenreID = tracks.GenreID
+GROUP BY genres.GenreID
+ORDER BY NumTracks DESC
+LIMIT 5;
+
+9. Album title with the most tracks, and display the track count.
+ SELECT al.Title AS AlbumTitle, COUNT(t.TrackID) AS TrackCount
+FROM chinook.albums al
+JOIN tracks t ON al.AlbumID = t.AlbumID
+GROUP BY al.AlbumID, al.Title
+ORDER BY TrackCount DESC
+LIMIT 1;
+
+10.Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+SELECT t.Name AS 'Track Name', a.Title AS 'Album Title', m.Name AS 'Media Type', g.Name AS 'Genre'
+FROM chinook.tracks t
+JOIN chinook.Albums a 
+on a.AlbumId = t.AlbumId
+JOIN chinook.Media_Types m
+on m.MediaTypeId = t.MediaTypeId
+JOIN chinook.Genres g
+on g.GenreId = t.GenreId;
+
+
+ 
